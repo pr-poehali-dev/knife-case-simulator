@@ -1,62 +1,94 @@
-import Navbar from '../components/Navbar';
+import { useEffect, useState } from 'react';
 import CaseModel from '../components/CaseModel';
-import { useCaseStore } from '../store/caseStore';
+import { caseStore } from '../store/caseStore';
 
-const HomePage = () => {
-  const cases = useCaseStore(state => state.cases);
+export default function HomePage() {
+  const [cases, setCases] = useState(caseStore.cases);
+  const [balance, setBalance] = useState(caseStore.balance);
+  
+  // Обновление состояния при изменениях
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCases(caseStore.cases);
+      setBalance(caseStore.balance);
+    }, 500);
+    
+    return () => clearInterval(interval);
+  }, []);
   
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Открывай Кейсы</h1>
+        <div className="bg-gray-800 py-2 px-4 rounded-full">
+          <span className="text-yellow-400 font-semibold">{balance} монет</span>
+        </div>
+      </div>
       
-      <div className="flex-1 py-10">
-        <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-8 text-center">Открывай кейсы и выигрывай ножи</h1>
-          
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cases.map((caseItem) => (
-              <div 
-                key={caseItem.id}
-                className="bg-card rounded-lg p-6 shadow-lg"
-              >
-                <CaseModel 
-                  caseId={caseItem.id}
-                  caseName={caseItem.name}
-                  price={caseItem.price}
-                  imageSrc={caseItem.image}
-                  isFree={caseItem.isFree}
-                />
-              </div>
-            ))}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {cases.map((caseItem) => (
+          <div key={caseItem.id} className="bg-gray-900 rounded-lg shadow-lg p-6 flex flex-col items-center">
+            <CaseModel 
+              caseId={caseItem.id} 
+              caseName={caseItem.name} 
+              price={caseItem.price} 
+              isFree={caseItem.isFree}
+            />
+          </div>
+        ))}
+      </div>
+      
+      <div className="mt-12 p-6 bg-gray-900 rounded-lg">
+        <h2 className="text-2xl font-bold mb-4">О шансах выпадения</h2>
+        <p className="mb-4">Шансы выпадения предметов зависят от типа кейса:</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="border border-gray-700 rounded p-4">
+            <h3 className="font-bold text-lg mb-2">Бесплатный кейс</h3>
+            <ul className="space-y-1 text-sm">
+              <li className="text-gray-400">Обычный: 70%</li>
+              <li className="text-blue-400">Необычный: 20%</li>
+              <li className="text-purple-400">Редкий: 7%</li>
+              <li className="text-pink-400">Эпический: 2%</li>
+              <li className="text-red-400">Мифический: 0.8%</li>
+              <li className="text-orange-400">Легендарный: 0.15%</li>
+              <li className="text-amber-400">Золотой: 0.04%</li>
+              <li className="text-lime-400">Титановый: 0.007%</li>
+              <li className="text-emerald-400">Божественный: 0.003%</li>
+            </ul>
           </div>
           
-          <div className="mt-16 max-w-4xl mx-auto bg-card rounded-lg p-8 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Редкости ножей:</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { name: 'Обычный', rarity: 'common' },
-                { name: 'Необычный', rarity: 'uncommon' },
-                { name: 'Редкий', rarity: 'rare' },
-                { name: 'Эпический', rarity: 'epic' },
-                { name: 'Мифический', rarity: 'mythic' },
-                { name: 'Легендарный', rarity: 'legendary' },
-                { name: 'Золотой', rarity: 'gold' },
-                { name: 'Титан', rarity: 'titan' },
-                { name: 'Божественный', rarity: 'divine' }
-              ].map((rarityInfo) => (
-                <div 
-                  key={rarityInfo.rarity}
-                  className={`p-3 rounded-md flex items-center justify-between rarity-${rarityInfo.rarity} ${rarityInfo.rarity !== 'common' && rarityInfo.rarity !== 'uncommon' ? 'glow-effect' : ''}`}
-                >
-                  <span className="font-medium">{rarityInfo.name}</span>
-                </div>
-              ))}
-            </div>
+          <div className="border border-gray-700 rounded p-4">
+            <h3 className="font-bold text-lg mb-2">Базовый кейс</h3>
+            <ul className="space-y-1 text-sm">
+              <li className="text-gray-400">Обычный: 45%</li>
+              <li className="text-blue-400">Необычный: 30%</li>
+              <li className="text-purple-400">Редкий: 15%</li>
+              <li className="text-pink-400">Эпический: 6%</li>
+              <li className="text-red-400">Мифический: 3%</li>
+              <li className="text-orange-400">Легендарный: 0.7%</li>
+              <li className="text-amber-400">Золотой: 0.2%</li>
+              <li className="text-lime-400">Титановый: 0.09%</li>
+              <li className="text-emerald-400">Божественный: 0.01%</li>
+            </ul>
+          </div>
+          
+          <div className="border border-gray-700 rounded p-4">
+            <h3 className="font-bold text-lg mb-2">Премиум кейс</h3>
+            <ul className="space-y-1 text-sm">
+              <li className="text-gray-400">Обычный: 25%</li>
+              <li className="text-blue-400">Необычный: 30%</li>
+              <li className="text-purple-400">Редкий: 25%</li>
+              <li className="text-pink-400">Эпический: 12%</li>
+              <li className="text-red-400">Мифический: 5%</li>
+              <li className="text-orange-400">Легендарный: 2%</li>
+              <li className="text-amber-400">Золотой: 0.7%</li>
+              <li className="text-lime-400">Титановый: 0.2%</li>
+              <li className="text-emerald-400">Божественный: 0.1%</li>
+            </ul>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default HomePage;
+}
